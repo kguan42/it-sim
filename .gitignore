@@ -1,0 +1,28 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.egg-info/
+dist/
+build/
+
+# Virtual environment
+.venv/
+venv/
+env/
+
+# Flask / SQLite
+instance/
+*.db
+*.sqlite3
+
+# Generated files
+it_helpdesk_activity.csv
+
+# Empty placeholder folders
+it-sim/
+
+# OS
+.DS_Store
+Thumbs.db
