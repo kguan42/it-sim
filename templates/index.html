@@ -18,6 +18,8 @@
 		button.primary { background: #2563eb; color: white; }
 		button.danger  { background: #dc2626; color: white; }
 		button.secondary { background: #e5e7eb; color: #1f2937; }
+		button.success { background: #16a34a; color: white; }
+		button.warning { background: #d97706; color: white; }
 		button:hover { opacity: .88; }
 		.toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
 		.filters { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 10px; }
@@ -32,6 +34,8 @@
 		.s-Open        { background: #dbeafe; color: #1e40af; }
 		.s-In-Progress { background: #e9d5ff; color: #6b21a8; }
 		.s-Resolved    { background: #d1fae5; color: #065f46; }
+		.c-Online  { background: #d1fae5; color: #065f46; }
+		.c-Offline { background: #fee2e2; color: #991b1b; }
 
 		/* SLA */
 		.sla-ok      { color: #059669; font-size: 0.8rem; }
@@ -39,9 +43,9 @@
 		.sla-breach  { color: #dc2626; font-size: 0.8rem; font-weight: 600; }
 
 		/* Modal */
-		.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; justify-content: center; align-items: flex-start; padding-top: 60px; }
+		.modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.45); z-index: 100; justify-content: center; align-items: flex-start; padding-top: 40px; }
 		.modal-overlay.open { display: flex; }
-		.modal-box { background: white; border-radius: 12px; padding: 24px; width: 100%; max-width: 560px; max-height: 80vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,.18); }
+		.modal-box { background: white; border-radius: 12px; padding: 24px; width: 100%; max-width: 680px; max-height: 88vh; overflow-y: auto; box-shadow: 0 8px 32px rgba(0,0,0,.18); }
 		.modal-box h2 { margin-bottom: 16px; }
 		.form-group { margin-bottom: 12px; }
 		.form-group label { display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 4px; color: #374151; }
@@ -59,13 +63,84 @@
 		.note-item { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 8px; padding: 10px 12px; }
 		.note-meta { font-size: 0.78rem; color: #6b7280; margin-bottom: 4px; }
 		.note-body { font-size: 0.88rem; }
-		.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin-bottom: 16px; }
+		.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 16px; margin-bottom: 12px; }
 		.detail-item label { font-size: 0.78rem; color: #6b7280; display: block; }
 		.detail-item span  { font-size: 0.9rem; font-weight: 500; }
+
+		/* Simulated issue banner */
+		.issue-banner {
+			background: #fff7ed;
+			border: 1px solid #fed7aa;
+			border-radius: 8px;
+			padding: 10px 14px;
+			margin-bottom: 14px;
+			font-size: 0.88rem;
+			color: #92400e;
+		}
+		.issue-banner strong { display: block; margin-bottom: 4px; color: #7c2d12; }
+
+		/* Quick-action buttons row in detail modal */
+		.action-bar { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+
+		/* Terminal */
+		.terminal {
+			background: #0d1117;
+			border-radius: 8px;
+			padding: 14px;
+			font-family: 'Consolas', 'Courier New', monospace;
+			font-size: 0.82rem;
+			margin-top: 16px;
+			border: 1px solid #30363d;
+		}
+		.terminal-header {
+			color: #8b949e;
+			font-size: 0.75rem;
+			margin-bottom: 10px;
+			padding-bottom: 6px;
+			border-bottom: 1px solid #21262d;
+			display: flex;
+			align-items: center;
+			gap: 6px;
+		}
+		.terminal-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+		.terminal-output {
+			color: #c9d1d9;
+			min-height: 140px;
+			max-height: 260px;
+			overflow-y: auto;
+			white-space: pre-wrap;
+			margin-bottom: 8px;
+			line-height: 1.5;
+		}
+		.t-cmd    { color: #58a6ff; }
+		.t-ok     { color: #56d364; }
+		.t-err    { color: #f85149; }
+		.t-warn   { color: #e3b341; }
+		.t-dim    { color: #8b949e; }
+		.t-info   { color: #79c0ff; }
+		.terminal-input-row {
+			display: flex;
+			align-items: center;
+			gap: 6px;
+			border-top: 1px solid #21262d;
+			padding-top: 8px;
+		}
+		.terminal-prompt { color: #58a6ff; white-space: nowrap; user-select: none; }
+		#terminal-input {
+			flex: 1;
+			background: transparent;
+			border: none;
+			color: #c9d1d9;
+			font-family: inherit;
+			font-size: inherit;
+			outline: none;
+			caret-color: #56d364;
+		}
 
 		.empty-row td { color: #9ca3af; font-style: italic; padding: 14px 8px; }
 		.secret { color: transparent; background: #d1d5db; border-radius: 3px; cursor: default; user-select: none; transition: color 0.15s, background 0.15s; }
 		.secret:hover { color: inherit; background: transparent; user-select: text; }
+
 	</style>
 </head>
 <body>
@@ -91,6 +166,7 @@
 					<option>New Hire Setup</option>
 					<option>Software Installation</option>
 					<option>Hardware Issue</option>
+					<option>Network Issue</option>
 				</select>
 				<select id="filter-priority" onchange="applyFilters()">
 					<option value="">All Priorities</option>
@@ -129,7 +205,7 @@
 			<h2>Users</h2>
 			<table id="users-table">
 				<thead>
-					<tr><th>Username</th><th>Name</th><th>Department</th><th>Email</th><th>Password</th><th>Locked</th></tr>
+					<tr><th>Username</th><th>Name</th><th>Department</th><th>Email</th><th>Password</th><th>Status</th><th></th></tr>
 				</thead>
 				<tbody></tbody>
 			</table>
@@ -140,7 +216,7 @@
 			<h2>Computers</h2>
 			<table id="computers-table">
 				<thead>
-					<tr><th>Hostname</th><th>IP</th><th>Department</th><th>User</th></tr>
+					<tr><th>Hostname</th><th>Status</th><th>IP Address</th><th>Department</th><th>User</th><th>Installed Software</th></tr>
 				</thead>
 				<tbody></tbody>
 			</table>
@@ -171,12 +247,13 @@
 			<div class="form-row">
 				<div class="form-group">
 					<label>Category</label>
-					<select id="ct-category">
+					<select id="ct-category" onchange="onCategoryChange()">
 						<option>Password Reset</option>
 						<option>Account Lockout</option>
 						<option>New Hire Setup</option>
 						<option>Software Installation</option>
 						<option>Hardware Issue</option>
+						<option>Network Issue</option>
 					</select>
 				</div>
 				<div class="form-group">
@@ -191,8 +268,9 @@
 			</div>
 			<div class="form-row">
 				<div class="form-group">
-					<label>User Affected</label>
+					<label id="ct-user-label">User Affected</label>
 					<select id="ct-user"></select>
+					<input id="ct-new-hire-name" type="text" placeholder="Full name of new hire" style="display:none" />
 				</div>
 				<div class="form-group">
 					<label>Assigned To</label>
@@ -210,14 +288,106 @@
 		</div>
 	</div>
 
+	<!-- ── Complete New Hire Modal ── -->
+	<div id="new-hire-modal" class="modal-overlay" onclick="onOverlayClick(event,'new-hire-modal')">
+		<div class="modal-box" style="max-width:440px">
+			<h2>Complete New Hire Setup</h2>
+			<p id="nh-hire-name" style="font-size:0.9rem;color:#6b7280;margin-bottom:16px"></p>
+			<div class="form-group">
+				<label>Department</label>
+				<select id="nh-department"></select>
+			</div>
+			<div class="form-group">
+				<label>Assign Computer</label>
+				<select id="nh-computer">
+					<option value="">— No computer yet —</option>
+				</select>
+			</div>
+			<div class="modal-actions">
+				<button class="secondary" onclick="closeModal('new-hire-modal')">Cancel</button>
+				<button class="primary" onclick="submitNewHire()">Create Account</button>
+			</div>
+		</div>
+	</div>
+
+	<!-- ── Edit User Modal ── -->
+	<div id="edit-user-modal" class="modal-overlay" onclick="onOverlayClick(event,'edit-user-modal')">
+		<div class="modal-box" style="max-width:480px">
+			<h2>Edit User</h2>
+			<input type="hidden" id="eu-id" />
+			<div class="form-row">
+				<div class="form-group" style="flex:2">
+					<label>Full Name</label>
+					<input id="eu-full-name" type="text" />
+				</div>
+				<div class="form-group">
+					<label>Username</label>
+					<input id="eu-username" type="text" disabled style="background:#f3f4f6;color:#6b7280" />
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group">
+					<label>Department</label>
+					<select id="eu-department"></select>
+				</div>
+				<div class="form-group">
+					<label>Email</label>
+					<input id="eu-email" type="text" />
+				</div>
+			</div>
+			<div class="form-row">
+				<div class="form-group">
+					<label>Password</label>
+					<input id="eu-password" type="text" placeholder="Leave blank to keep current" />
+				</div>
+				<div class="form-group">
+					<label>Account Status</label>
+					<select id="eu-locked">
+						<option value="false">Active</option>
+						<option value="true">Locked</option>
+					</select>
+				</div>
+			</div>
+			<div class="form-group">
+				<label>Groups</label>
+				<input id="eu-groups" type="text" placeholder="e.g. Domain Users, IT Staff" />
+			</div>
+			<div class="modal-actions">
+				<button class="secondary" onclick="closeModal('edit-user-modal')">Cancel</button>
+				<button class="primary" onclick="submitEditUser()">Save Changes</button>
+			</div>
+		</div>
+	</div>
+
 	<!-- ── Ticket Detail Modal ── -->
 	<div id="detail-modal" class="modal-overlay" onclick="onOverlayClick(event,'detail-modal')">
 		<div class="modal-box">
 			<h2 id="detail-title"></h2>
 			<div class="detail-grid" id="detail-grid"></div>
-			<p id="detail-description" style="font-size:0.9rem;color:#374151;margin-bottom:16px;"></p>
+			<p id="detail-description" style="font-size:0.9rem;color:#374151;margin-bottom:12px;"></p>
 
-			<h3>Work Notes</h3>
+			<!-- Simulated issue state banner -->
+			<div id="issue-banner" class="issue-banner" style="display:none"></div>
+
+			<!-- Quick action buttons -->
+			<div class="action-bar" id="detail-action-bar"></div>
+
+			<!-- Terminal -->
+			<div class="terminal" id="terminal-panel">
+				<div class="terminal-header">
+					<span class="terminal-dot" style="background:#ff5f57"></span>
+					<span class="terminal-dot" style="background:#febc2e"></span>
+					<span class="terminal-dot" style="background:#28c840"></span>
+					&nbsp;Remote Diagnostic Console &mdash; <span id="terminal-host">localhost</span>
+				</div>
+				<div class="terminal-output" id="terminal-output"></div>
+				<div class="terminal-input-row">
+					<span class="terminal-prompt" id="terminal-prompt">C:\IT-Tools&gt;</span>
+					<input type="text" id="terminal-input" autocomplete="off" spellcheck="false" placeholder="type 'help' for available commands" />
+				</div>
+			</div>
+
+			<h3 style="margin-top:18px">Work Notes</h3>
 			<div class="note-list" id="note-list"></div>
 
 			<div class="form-group" style="margin-top:12px">
@@ -240,8 +410,14 @@
 	</div>
 
 	<script>
-		let allTickets = [];
+		let allTickets   = [];
+		let allUsers     = [];
+		let allComputers = [];
 		let currentDetailTicketId = null;
+		let currentDetailComputer = null;
+		let currentDetailUser     = null;
+		let terminalHistory = [];
+		let terminalHistoryIdx = -1;
 
 		// ── Utilities ──────────────────────────────────────────────────────────
 		async function fetchJson(url, options) {
@@ -252,11 +428,9 @@
 		function closeModal(id) {
 			document.getElementById(id).classList.remove('open');
 		}
-
 		function openModal(id) {
 			document.getElementById(id).classList.add('open');
 		}
-
 		function onOverlayClick(e, id) {
 			if (e.target === e.currentTarget) closeModal(id);
 		}
@@ -264,10 +438,12 @@
 		function priorityBadge(p) {
 			return `<span class="badge p-${p}">${p}</span>`;
 		}
-
 		function statusBadge(s) {
 			const cls = s.replace(' ', '-');
 			return `<span class="badge s-${cls}">${s}</span>`;
+		}
+		function computerStatusBadge(s) {
+			return `<span class="badge c-${s}">${s}</span>`;
 		}
 
 		function slaDisplay(deadline, status) {
@@ -283,6 +459,15 @@
 		function fmtDate(s) {
 			if (!s) return '—';
 			return new Date(s).toLocaleString();
+		}
+
+		function escHtml(str) {
+			if (str == null) return '';
+			return String(str)
+				.replace(/&/g, '&amp;')
+				.replace(/</g, '&lt;')
+				.replace(/>/g, '&gt;')
+				.replace(/"/g, '&quot;');
 		}
 
 		// ── Filters ───────────────────────────────────────────────────────────
@@ -307,17 +492,26 @@
 			}
 			if (ticket.status !== 'Resolved') {
 				if (ticket.category === 'Password Reset') {
-					btns.push(`<button onclick="doPasswordReset(${ticket.id})">Reset PW</button>`);
+					btns.push(`<button class="warning" onclick="doPasswordReset(${ticket.id})">Reset PW</button>`);
 				}
 				if (ticket.category === 'Account Lockout') {
-					btns.push(`<button onclick="doUnlock(${ticket.id})">Unlock</button>`);
+					btns.push(`<button class="warning" onclick="doUnlock(${ticket.id})">Unlock</button>`);
 				}
 				if (ticket.category === 'New Hire Setup') {
-					btns.push(`<button onclick="doNewHire(${ticket.id})">Finish Hire</button>`);
+					btns.push(`<button class="warning" onclick="doNewHire(${ticket.id})">Finish Hire</button>`);
+				}
+				if (ticket.category === 'Hardware Issue') {
+					btns.push(`<button class="warning" onclick="doFixHardware(${ticket.id})">Fix Hardware</button>`);
+				}
+				if (ticket.category === 'Network Issue') {
+					btns.push(`<button class="warning" onclick="doFixNetwork(${ticket.id})">Fix Network</button>`);
+				}
+				if (ticket.category === 'Software Installation') {
+					btns.push(`<button class="warning" onclick="doInstallSoftware(${ticket.id})">Install SW</button>`);
 				}
 				btns.push(`<button class="primary" onclick="setStatus(${ticket.id},'Resolved')">Resolve</button>`);
 			}
-			btns.push(`<button class="secondary" onclick="openDetail(${ticket.id})">Notes</button>`);
+			btns.push(`<button class="secondary" onclick="openDetail(${ticket.id})">Detail</button>`);
 			return btns.join(' ');
 		}
 
@@ -371,32 +565,35 @@
 
 		// ── Users / Computers / Departments ───────────────────────────────────
 		async function loadUsers() {
-			const users = await fetchJson('/api/users');
+			allUsers = await fetchJson('/api/users');
 			const tbody = document.querySelector('#users-table tbody');
-			tbody.innerHTML = users.map(u => `
+			tbody.innerHTML = allUsers.map(u => `
 				<tr>
 					<td>${escHtml(u.username)}</td>
 					<td>${escHtml(u.full_name)}</td>
 					<td>${escHtml(u.department)}</td>
 					<td>${escHtml(u.email)}</td>
 					<td><code class="secret">${escHtml(u.password)}</code></td>
-					<td style="color:${u.is_locked ? '#dc2626' : '#059669'}">${u.is_locked ? 'Locked' : 'Active'}</td>
+					<td style="color:${u.is_locked ? '#dc2626' : '#059669'}">${u.is_locked ? '🔒 Locked' : '✓ Active'}</td>
+					<td><button class="secondary" onclick="openEditUser(${u.id})">Edit</button></td>
 				</tr>
 			`).join('');
 			// Populate create-ticket user dropdown
 			const sel = document.getElementById('ct-user');
-			sel.innerHTML = users.map(u => `<option value="${escHtml(u.username)}">${escHtml(u.username)} — ${escHtml(u.full_name)}</option>`).join('');
+			sel.innerHTML = allUsers.map(u => `<option value="${escHtml(u.username)}">${escHtml(u.username)} — ${escHtml(u.full_name)}</option>`).join('');
 		}
 
 		async function loadComputers() {
-			const computers = await fetchJson('/api/computers');
+			allComputers = await fetchJson('/api/computers');
 			const tbody = document.querySelector('#computers-table tbody');
-			tbody.innerHTML = computers.map(c => `
+			tbody.innerHTML = allComputers.map(c => `
 				<tr>
-					<td>${escHtml(c.hostname)}</td>
-					<td>${escHtml(c.ip_address)}</td>
+					<td><strong>${escHtml(c.hostname)}</strong></td>
+					<td>${computerStatusBadge(c.status)}</td>
+					<td style="font-family:monospace">${escHtml(c.ip_address)}</td>
 					<td>${escHtml(c.department)}</td>
 					<td>${escHtml(c.user_assigned)}</td>
+					<td style="font-size:0.8rem;color:#6b7280">${escHtml((c.installed_software || []).join(', '))}</td>
 				</tr>
 			`).join('');
 		}
@@ -443,29 +640,100 @@
 		async function doPasswordReset(ticketId) {
 			const pw = prompt('Enter new password for this user:');
 			if (!pw) return;
-			await fetchJson(`/api/ticket/${ticketId}/manual_password_reset`, {
+			const res = await fetchJson(`/api/ticket/${ticketId}/manual_password_reset`, {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
 				body: JSON.stringify({ new_password: pw }),
 			});
+			if (res.error) { alert('Error: ' + res.error); return; }
 			await loadAll();
+			if (currentDetailTicketId === ticketId) refreshDetailBanner();
 		}
 
 		async function doUnlock(ticketId) {
-			await fetchJson(`/api/ticket/${ticketId}/manual_account_unlock`, { method: 'POST' });
+			const res = await fetchJson(`/api/ticket/${ticketId}/manual_account_unlock`, { method: 'POST' });
+			if (res.error) { alert('Error: ' + res.error); return; }
 			await loadAll();
+			if (currentDetailTicketId === ticketId) refreshDetailBanner();
 		}
 
+		let newHireTicketId = null;
+
 		async function doNewHire(ticketId) {
-			await fetchJson(`/api/ticket/${ticketId}/manual_new_hire`, { method: 'POST' });
+			newHireTicketId = ticketId;
+			const ticket = allTickets.find(t => t.id === ticketId);
+
+			// Populate hire name
+			document.getElementById('nh-hire-name').textContent =
+				`New hire: ${ticket ? ticket.user_affected : ''}`;
+
+			// Populate department dropdown
+			const deptSel = document.getElementById('nh-department');
+			const depts = await fetchJson('/api/departments');
+			deptSel.innerHTML = depts.map(d =>
+				`<option value="${escHtml(d.name)}">${escHtml(d.name)}</option>`
+			).join('');
+
+			// Populate computer dropdown (show hostname + current assignee)
+			const compSel = document.getElementById('nh-computer');
+			compSel.innerHTML = '<option value="">— No computer yet —</option>' +
+				allComputers.map(c =>
+					`<option value="${c.id}">${escHtml(c.hostname)} (${escHtml(c.department)}) — assigned: ${escHtml(c.user_assigned)}</option>`
+				).join('');
+
+			openModal('new-hire-modal');
+		}
+
+		async function submitNewHire() {
+			const department  = document.getElementById('nh-department').value;
+			const computer_id = document.getElementById('nh-computer').value || null;
+			const res = await fetchJson(`/api/ticket/${newHireTicketId}/manual_new_hire`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ department, computer_id: computer_id ? parseInt(computer_id) : null }),
+			});
+			if (res.error) { alert('Error: ' + res.error); return; }
+			closeModal('new-hire-modal');
 			await loadAll();
+			if (currentDetailTicketId === newHireTicketId) refreshDetailBanner();
+		}
+
+		async function doFixHardware(ticketId) {
+			const res = await fetchJson(`/api/ticket/${ticketId}/fix_hardware`, { method: 'POST' });
+			if (res.error) { alert('Error: ' + res.error); return; }
+			await loadAll();
+			if (currentDetailTicketId === ticketId) refreshDetailBanner();
+		}
+
+		async function doFixNetwork(ticketId) {
+			const res = await fetchJson(`/api/ticket/${ticketId}/fix_network`, { method: 'POST' });
+			if (res.error) { alert('Error: ' + res.error); return; }
+			await loadAll();
+			if (currentDetailTicketId === ticketId) refreshDetailBanner();
+		}
+
+		async function doInstallSoftware(ticketId) {
+			const res = await fetchJson(`/api/ticket/${ticketId}/install_software`, { method: 'POST' });
+			if (res.error) { alert('Error: ' + res.error); return; }
+			await loadAll();
+			if (currentDetailTicketId === ticketId) refreshDetailBanner();
 		}
 
 		// ── Create Ticket Modal ───────────────────────────────────────────────
+		function onCategoryChange() {
+			const isNewHire = document.getElementById('ct-category').value === 'New Hire Setup';
+			document.getElementById('ct-user').style.display        = isNewHire ? 'none' : '';
+			document.getElementById('ct-new-hire-name').style.display = isNewHire ? '' : 'none';
+			document.getElementById('ct-user-label').textContent    = isNewHire ? 'New Hire Full Name' : 'User Affected';
+		}
+
 		function openCreateModal() {
 			document.getElementById('ct-title').value = '';
 			document.getElementById('ct-description').value = '';
 			document.getElementById('ct-assigned').value = '';
+			document.getElementById('ct-new-hire-name').value = '';
+			document.getElementById('ct-category').value = 'Password Reset';
+			onCategoryChange();
 			openModal('create-modal');
 		}
 
@@ -473,12 +741,16 @@
 			const title    = document.getElementById('ct-title').value.trim();
 			const category = document.getElementById('ct-category').value;
 			const priority = document.getElementById('ct-priority').value;
-			const user     = document.getElementById('ct-user').value;
 			const assigned = document.getElementById('ct-assigned').value.trim();
 			const desc     = document.getElementById('ct-description').value.trim();
+			const isNewHire = category === 'New Hire Setup';
+			const user = isNewHire
+				? document.getElementById('ct-new-hire-name').value.trim()
+				: document.getElementById('ct-user').value;
 
 			if (!title) { alert('Title is required.'); return; }
 			if (!desc)  { alert('Description is required.'); return; }
+			if (isNewHire && !user) { alert('New hire full name is required.'); return; }
 
 			await fetchJson('/api/tickets/create', {
 				method: 'POST',
@@ -492,30 +764,130 @@
 			await loadAll();
 		}
 
-		// ── Ticket Detail / Notes Modal ───────────────────────────────────────
+		// ── Ticket Detail / Notes / Terminal Modal ────────────────────────────
+		function refreshDetailBanner() {
+			const ticket = allTickets.find(t => t.id === currentDetailTicketId);
+			if (!ticket) return;
+			currentDetailComputer = ticket.computer_id
+				? allComputers.find(c => c.id === ticket.computer_id) || null
+				: null;
+			currentDetailUser = allUsers.find(u => u.username === ticket.user_affected) || null;
+			renderIssueBanner(ticket);
+			renderDetailActionBar(ticket);
+		}
+
+		function renderIssueBanner(ticket) {
+			const banner = document.getElementById('issue-banner');
+			const lines = [];
+
+			if (ticket.category === 'Account Lockout' && currentDetailUser) {
+				if (currentDetailUser.is_locked) {
+					lines.push(`<strong>⚠ Simulated Issue Active</strong>`);
+					lines.push(`AD account <strong>${currentDetailUser.username}</strong> is currently <strong style="color:#dc2626">LOCKED</strong>. The user cannot log in.`);
+				} else {
+					lines.push(`<strong>✓ Issue Resolved</strong>`);
+					lines.push(`AD account <strong>${currentDetailUser.username}</strong> is <strong style="color:#059669">UNLOCKED</strong> and active.`);
+				}
+			} else if (ticket.category === 'Password Reset' && currentDetailUser) {
+				lines.push(`<strong>ℹ Password Reset Required</strong>`);
+				lines.push(`Current password for <strong>${currentDetailUser.username}</strong>: <code class="secret">${escHtml(currentDetailUser.password)}</code> — reset it to allow login.`);
+			} else if (ticket.category === 'Hardware Issue' && currentDetailComputer) {
+				if (currentDetailComputer.status === 'Offline') {
+					lines.push(`<strong>⚠ Simulated Issue Active</strong>`);
+					lines.push(`Workstation <strong>${currentDetailComputer.hostname}</strong> is <strong style="color:#dc2626">OFFLINE</strong>. User cannot work.`);
+				} else {
+					lines.push(`<strong>✓ Issue Resolved</strong>`);
+					lines.push(`Workstation <strong>${currentDetailComputer.hostname}</strong> is <strong style="color:#059669">ONLINE</strong>.`);
+				}
+			} else if (ticket.category === 'Network Issue' && currentDetailComputer) {
+				const isApipa = currentDetailComputer.ip_address.startsWith('169.254');
+				if (isApipa) {
+					lines.push(`<strong>⚠ Simulated Issue Active</strong>`);
+					lines.push(`<strong>${currentDetailComputer.hostname}</strong> has APIPA address <strong style="color:#dc2626;font-family:monospace">${currentDetailComputer.ip_address}</strong> — no network connectivity.`);
+				} else {
+					lines.push(`<strong>✓ Issue Resolved</strong>`);
+					lines.push(`<strong>${currentDetailComputer.hostname}</strong> IP restored to <strong style="color:#059669;font-family:monospace">${currentDetailComputer.ip_address}</strong>.`);
+				}
+			} else if (ticket.category === 'Software Installation' && ticket.software_needed) {
+				const installed = currentDetailComputer ? (currentDetailComputer.installed_software || []) : [];
+				if (!installed.includes(ticket.software_needed)) {
+					lines.push(`<strong>⚠ Simulated Issue Active</strong>`);
+					lines.push(`<strong>${ticket.software_needed}</strong> is not installed on <strong>${currentDetailComputer ? currentDetailComputer.hostname : 'the workstation'}</strong>.`);
+				} else {
+					lines.push(`<strong>✓ Issue Resolved</strong>`);
+					lines.push(`<strong>${ticket.software_needed}</strong> is now installed.`);
+				}
+			}
+
+			if (lines.length) {
+				banner.style.display = '';
+				banner.innerHTML = lines.join('<br>');
+			} else {
+				banner.style.display = 'none';
+			}
+		}
+
+		function renderDetailActionBar(ticket) {
+			const bar = document.getElementById('detail-action-bar');
+			const btns = [];
+			if (ticket.status !== 'Resolved') {
+				if (ticket.category === 'Password Reset') {
+					btns.push(`<button class="warning" onclick="doPasswordReset(${ticket.id})">Reset Password</button>`);
+				}
+				if (ticket.category === 'Account Lockout') {
+					btns.push(`<button class="warning" onclick="doUnlock(${ticket.id})">Unlock Account</button>`);
+				}
+				if (ticket.category === 'New Hire Setup') {
+					btns.push(`<button class="warning" onclick="doNewHire(${ticket.id})">Complete Hire Setup</button>`);
+				}
+				if (ticket.category === 'Hardware Issue') {
+					btns.push(`<button class="warning" onclick="doFixHardware(${ticket.id})">Bring Workstation Online</button>`);
+				}
+				if (ticket.category === 'Network Issue') {
+					btns.push(`<button class="warning" onclick="doFixNetwork(${ticket.id})">Renew IP / Fix Network</button>`);
+				}
+				if (ticket.category === 'Software Installation') {
+					btns.push(`<button class="warning" onclick="doInstallSoftware(${ticket.id})">Install Software</button>`);
+				}
+				btns.push(`<button class="primary" onclick="setStatus(${ticket.id},'Resolved')">Mark Resolved</button>`);
+			}
+			bar.innerHTML = btns.join('');
+		}
+
 		async function openDetail(ticketId) {
 			currentDetailTicketId = ticketId;
 			const ticket = allTickets.find(t => t.id === ticketId);
 			if (!ticket) return;
 
+			currentDetailComputer = ticket.computer_id
+				? allComputers.find(c => c.id === ticket.computer_id) || null
+				: null;
+			currentDetailUser = allUsers.find(u => u.username === ticket.user_affected) || null;
+
 			document.getElementById('detail-title').textContent = `#${ticket.id} — ${ticket.title}`;
 			document.getElementById('detail-description').textContent = ticket.description;
 			document.getElementById('detail-grid').innerHTML = [
-				['Category', ticket.category],
-				['Priority', priorityBadge(ticket.priority)],
-				['Status', statusBadge(ticket.status)],
+				['Category',     ticket.category],
+				['Priority',     priorityBadge(ticket.priority)],
+				['Status',       statusBadge(ticket.status)],
 				['User Affected', ticket.user_affected],
-				['Assigned To', ticket.assigned_to || '—'],
-				['Created', fmtDate(ticket.created_at)],
+				['Assigned To',  ticket.assigned_to || '—'],
+				['Created',      fmtDate(ticket.created_at)],
 				['SLA Deadline', fmtDate(ticket.sla_deadline)],
 				['SLA Remaining', slaDisplay(ticket.sla_deadline, ticket.status)],
 			].map(([label, val]) => `
 				<div class="detail-item"><label>${label}</label><span>${val}</span></div>
 			`).join('');
 
+			renderIssueBanner(ticket);
+			renderDetailActionBar(ticket);
+			initTerminal(ticket);
+
 			await refreshNotes(ticketId);
 			document.getElementById('new-note-body').value = '';
 			openModal('detail-modal');
+			// Focus terminal input
+			setTimeout(() => document.getElementById('terminal-input').focus(), 120);
 		}
 
 		async function refreshNotes(ticketId) {
@@ -546,18 +918,358 @@
 			await refreshNotes(currentDetailTicketId);
 		}
 
+		// ── Terminal ──────────────────────────────────────────────────────────
+		function initTerminal(ticket) {
+			const out = document.getElementById('terminal-output');
+			const inp = document.getElementById('terminal-input');
+			const hostEl = document.getElementById('terminal-host');
+			hostEl.textContent = currentDetailComputer ? currentDetailComputer.hostname : 'HELPDESK';
+			out.innerHTML = '';
+			inp.value = '';
+			terminalHistory = [];
+			terminalHistoryIdx = -1;
+			termPrint('t-dim', `IT Remote Tools v2.1  —  Ticket #${ticket.id}  (${ticket.category})`);
+			termPrint('t-dim', `Affected user: ${ticket.user_affected}  |  Type <span class="t-info">help</span> to list commands.`);
+			termPrint('', '');
+		}
+
+		function termPrint(cls, text) {
+			const out = document.getElementById('terminal-output');
+			const line = document.createElement('div');
+			if (cls) line.className = cls;
+			line.innerHTML = text;
+			out.appendChild(line);
+			out.scrollTop = out.scrollHeight;
+		}
+
+		function termEcho(cmd) {
+			termPrint('t-cmd', `C:\\IT-Tools&gt; ${escHtml(cmd)}`);
+		}
+
+		document.getElementById('terminal-input').addEventListener('keydown', async function(e) {
+			if (e.key === 'Enter') {
+				const cmd = this.value.trim();
+				this.value = '';
+				if (!cmd) return;
+				terminalHistory.unshift(cmd);
+				terminalHistoryIdx = -1;
+				await handleTerminalCommand(cmd);
+			} else if (e.key === 'ArrowUp') {
+				if (terminalHistoryIdx < terminalHistory.length - 1) {
+					terminalHistoryIdx++;
+					this.value = terminalHistory[terminalHistoryIdx];
+				}
+				e.preventDefault();
+			} else if (e.key === 'ArrowDown') {
+				if (terminalHistoryIdx > 0) {
+					terminalHistoryIdx--;
+					this.value = terminalHistory[terminalHistoryIdx];
+				} else {
+					terminalHistoryIdx = -1;
+					this.value = '';
+				}
+				e.preventDefault();
+			}
+		});
+
+		async function handleTerminalCommand(raw) {
+			const ticket = allTickets.find(t => t.id === currentDetailTicketId);
+			const parts  = raw.trim().split(/\s+/);
+			const cmd    = parts[0].toLowerCase();
+			termEcho(raw);
+
+			if (cmd === 'help') {
+				termPrint('t-info', 'Available commands:');
+				termPrint('', '  <span class="t-info">help</span>                        — Show this help');
+				termPrint('', '  <span class="t-info">whoami</span>                      — Current technician info');
+				termPrint('', '  <span class="t-info">ping &lt;hostname&gt;</span>              — Check host reachability');
+				termPrint('', '  <span class="t-info">ipconfig</span>                    — Show network config for affected workstation');
+				termPrint('', '  <span class="t-info">ipconfig /renew</span>             — Renew IP lease  (Network Issue tickets)');
+				termPrint('', '  <span class="t-info">power-cycle &lt;hostname&gt;</span>       — Force restart workstation  (Hardware Issue)');
+				termPrint('', '  <span class="t-info">Get-ADUser &lt;username&gt;</span>        — Query Active Directory user');
+				termPrint('', '  <span class="t-info">net user &lt;user&gt; /active:yes</span>  — Unlock AD account  (Account Lockout)');
+				termPrint('', '  <span class="t-info">net user &lt;user&gt; &lt;password&gt;</span>   — Reset AD password  (Password Reset)');
+				termPrint('', '  <span class="t-info">list-software</span>               — Show installed software on workstation');
+				termPrint('', '  <span class="t-info">install &lt;software&gt;</span>           — Install software on workstation  (Software Install)');
+				termPrint('', '  <span class="t-info">clear</span>                       — Clear terminal');
+				termPrint('', '');
+				return;
+			}
+
+			if (cmd === 'clear') {
+				document.getElementById('terminal-output').innerHTML = '';
+				return;
+			}
+
+			if (cmd === 'whoami') {
+				termPrint('t-ok', 'COMPANY\\Technician  [IT Support]  —  elevated privileges');
+				termPrint('', '');
+				return;
+			}
+
+			if (cmd === 'ping') {
+				const host = parts[1] || (currentDetailComputer ? currentDetailComputer.hostname : null);
+				if (!host) { termPrint('t-err', 'Usage: ping <hostname>'); termPrint('',''); return; }
+				termPrint('', `Pinging ${escHtml(host)}...`);
+				const comp = allComputers.find(c => c.hostname.toLowerCase() === host.toLowerCase());
+				if (!comp) {
+					termPrint('t-err', 'Ping request could not find host. Check the name and try again.');
+				} else if (comp.status === 'Offline') {
+					termPrint('t-warn', 'Request timed out.');
+					termPrint('t-warn', 'Request timed out.');
+					termPrint('t-warn', 'Request timed out.');
+					termPrint('t-err',  `Ping statistics for ${host}: 0 received, 100% loss.`);
+				} else {
+					const ip = comp.ip_address;
+					termPrint('t-ok', `Reply from ${ip}: bytes=32 time=1ms TTL=128`);
+					termPrint('t-ok', `Reply from ${ip}: bytes=32 time=1ms TTL=128`);
+					termPrint('t-ok', `Ping statistics: 2 received, 0% loss.`);
+				}
+				termPrint('', '');
+				return;
+			}
+
+			if (cmd === 'ipconfig') {
+				const renew = parts[1] === '/renew';
+				if (!currentDetailComputer) {
+					termPrint('t-err', 'No workstation linked to this ticket.');
+					termPrint('', ''); return;
+				}
+				if (renew) {
+					if (ticket && ticket.category === 'Network Issue') {
+						termPrint('t-warn', `Releasing DHCP lease on ${currentDetailComputer.hostname}...`);
+						termPrint('t-warn', 'Requesting new address from DHCP server...');
+						const res = await fetchJson(`/api/ticket/${currentDetailTicketId}/fix_network`, { method: 'POST' });
+						if (res.error) {
+							termPrint('t-err', 'DHCP request failed: ' + res.error);
+						} else {
+							await loadAll();
+							const updated = allComputers.find(c => c.id === currentDetailComputer.id);
+							currentDetailComputer = updated || currentDetailComputer;
+							termPrint('t-ok', `New IP assigned: ${currentDetailComputer.ip_address}`);
+							termPrint('t-ok', 'Network connectivity restored.');
+							renderIssueBanner(allTickets.find(t => t.id === currentDetailTicketId));
+							renderDetailActionBar(allTickets.find(t => t.id === currentDetailTicketId));
+						}
+					} else {
+						termPrint('t-warn', 'Renewing IP...');
+						termPrint('t-ok', `IP Address: ${currentDetailComputer.ip_address}  (no change — DHCP not the issue)`);
+					}
+					termPrint('', ''); return;
+				}
+				// Plain ipconfig
+				termPrint('', `Windows IP Configuration`);
+				termPrint('', '');
+				termPrint('', `Ethernet adapter Local Area Connection:`);
+				const isApipa = currentDetailComputer.ip_address.startsWith('169.254');
+				termPrint(isApipa ? 't-warn' : '', `   IPv4 Address. . . . . : ${currentDetailComputer.ip_address}`);
+				if (isApipa) {
+					termPrint('t-warn', '   Subnet Mask. . . . . : 255.255.0.0');
+					termPrint('t-warn', '   Default Gateway. . . :     (none)');
+					termPrint('t-err',  '   *** APIPA address detected — no DHCP server contact ***');
+				} else {
+					termPrint('', '   Subnet Mask. . . . . : 255.255.255.0');
+					termPrint('', '   Default Gateway. . . : 192.168.1.1');
+				}
+				termPrint('', '');
+				return;
+			}
+
+			if (cmd === 'power-cycle') {
+				const host = parts[1] || (currentDetailComputer ? currentDetailComputer.hostname : null);
+				if (!host) { termPrint('t-err', 'Usage: power-cycle <hostname>'); termPrint('',''); return; }
+				if (!ticket || ticket.category !== 'Hardware Issue') {
+					termPrint('t-err', 'power-cycle is only applicable to Hardware Issue tickets.');
+					termPrint('',''); return;
+				}
+				termPrint('t-warn', `Sending remote power-cycle signal to ${escHtml(host)}...`);
+				termPrint('t-warn', 'Waiting for POST sequence...');
+				const res = await fetchJson(`/api/ticket/${currentDetailTicketId}/fix_hardware`, { method: 'POST' });
+				if (res.error) {
+					termPrint('t-err', 'Power-cycle failed: ' + res.error);
+				} else {
+					await loadAll();
+					currentDetailComputer = allComputers.find(c => c.id === currentDetailComputer.id) || currentDetailComputer;
+					termPrint('t-ok', `${escHtml(host)} completed POST successfully.`);
+					termPrint('t-ok', `${escHtml(host)} is back ONLINE.`);
+					renderIssueBanner(allTickets.find(t => t.id === currentDetailTicketId));
+					renderDetailActionBar(allTickets.find(t => t.id === currentDetailTicketId));
+				}
+				termPrint('', ''); return;
+			}
+
+			if (cmd === 'get-aduser') {
+				const username = parts[1] || (currentDetailUser ? currentDetailUser.username : null);
+				if (!username) { termPrint('t-err', 'Usage: Get-ADUser <username>'); termPrint('',''); return; }
+				const user = allUsers.find(u => u.username.toLowerCase() === username.toLowerCase());
+				if (!user) { termPrint('t-err', `Get-ADUser: Cannot find object '${username}'.`); termPrint('',''); return; }
+				termPrint('', `DistinguishedName : CN=${escHtml(user.full_name)},OU=${escHtml(user.department)},DC=company,DC=com`);
+				termPrint('', `UserPrincipalName : ${escHtml(user.email)}`);
+				termPrint('', `SamAccountName    : ${escHtml(user.username)}`);
+				termPrint('', `Department        : ${escHtml(user.department)}`);
+				termPrint(user.is_locked ? 't-err' : 't-ok',
+					`LockedOut         : ${user.is_locked ? 'True  ← ACCOUNT LOCKED' : 'False'}`);
+				termPrint('', `MemberOf          : ${escHtml(user.groups)}`);
+				termPrint('', '');
+				return;
+			}
+
+			if (cmd === 'net' && parts[1] === 'user') {
+				const username = parts[2];
+				const arg3     = parts[3];
+				if (!username) { termPrint('t-err', 'Usage: net user <username> [/active:yes | <newpassword>]'); termPrint('',''); return; }
+
+				if (arg3 === '/active:yes') {
+					// Unlock account
+					if (!ticket || ticket.category !== 'Account Lockout') {
+						termPrint('t-err', 'This command applies to Account Lockout tickets.');
+						termPrint('',''); return;
+					}
+					termPrint('t-warn', `Unlocking account: ${escHtml(username)}...`);
+					const res = await fetchJson(`/api/ticket/${currentDetailTicketId}/manual_account_unlock`, { method: 'POST' });
+					if (res.error) { termPrint('t-err', res.error); }
+					else {
+						await loadAll();
+						currentDetailUser = allUsers.find(u => u.username === username) || currentDetailUser;
+						termPrint('t-ok', `The command completed successfully.`);
+						termPrint('t-ok', `${escHtml(username)} — account is now ACTIVE.`);
+						renderIssueBanner(allTickets.find(t => t.id === currentDetailTicketId));
+						renderDetailActionBar(allTickets.find(t => t.id === currentDetailTicketId));
+					}
+				} else if (arg3 && !arg3.startsWith('/')) {
+					// Password reset
+					if (!ticket || ticket.category !== 'Password Reset') {
+						termPrint('t-err', 'This command applies to Password Reset tickets.');
+						termPrint('',''); return;
+					}
+					termPrint('t-warn', `Resetting password for ${escHtml(username)}...`);
+					const res = await fetchJson(`/api/ticket/${currentDetailTicketId}/manual_password_reset`, {
+						method: 'POST',
+						headers: { 'Content-Type': 'application/json' },
+						body: JSON.stringify({ new_password: arg3 }),
+					});
+					if (res.error) { termPrint('t-err', res.error); }
+					else {
+						await loadAll();
+						currentDetailUser = allUsers.find(u => u.username === username) || currentDetailUser;
+						termPrint('t-ok', `The command completed successfully.`);
+						termPrint('t-ok', `Password for ${escHtml(username)} has been reset.`);
+						renderIssueBanner(allTickets.find(t => t.id === currentDetailTicketId));
+						renderDetailActionBar(allTickets.find(t => t.id === currentDetailTicketId));
+					}
+				} else {
+					termPrint('t-err', 'Usage: net user <username> /active:yes   OR   net user <username> <newpassword>');
+				}
+				termPrint('', ''); return;
+			}
+
+			if (cmd === 'list-software') {
+				if (!currentDetailComputer) {
+					termPrint('t-err', 'No workstation linked to this ticket.');
+					termPrint('',''); return;
+				}
+				const sw = currentDetailComputer.installed_software || [];
+				termPrint('', `Installed software on ${escHtml(currentDetailComputer.hostname)}:`);
+				if (sw.length) {
+					sw.forEach(s => termPrint('t-ok', `  [installed]  ${escHtml(s)}`));
+					if (ticket && ticket.software_needed && !sw.includes(ticket.software_needed)) {
+						termPrint('t-err', `  [MISSING]    ${escHtml(ticket.software_needed)}  ← required by this ticket`);
+					}
+				} else {
+					termPrint('t-warn', '  (no software records found)');
+				}
+				termPrint('', ''); return;
+			}
+
+			if (cmd === 'install') {
+				const swName = parts.slice(1).join(' ');
+				if (!swName) { termPrint('t-err', 'Usage: install <software name>'); termPrint('',''); return; }
+				if (!ticket || ticket.category !== 'Software Installation') {
+					termPrint('t-err', 'install is only applicable to Software Installation tickets.');
+					termPrint('',''); return;
+				}
+				if (!ticket.software_needed) {
+					termPrint('t-err', 'No software target found on this ticket.');
+					termPrint('',''); return;
+				}
+				if (swName.toLowerCase() !== ticket.software_needed.toLowerCase()) {
+					termPrint('t-warn', `Requested: ${escHtml(swName)}`);
+					termPrint('t-warn', `Ticket requires: ${escHtml(ticket.software_needed)}`);
+					termPrint('t-err', 'Software name mismatch. Check the ticket for the correct package name.');
+					termPrint('',''); return;
+				}
+				termPrint('t-warn', `Locating installer for ${escHtml(ticket.software_needed)}...`);
+				termPrint('t-warn', `Deploying to ${escHtml(currentDetailComputer ? currentDetailComputer.hostname : 'workstation')}...`);
+				const res = await fetchJson(`/api/ticket/${currentDetailTicketId}/install_software`, { method: 'POST' });
+				if (res.error) { termPrint('t-err', 'Install failed: ' + res.error); }
+				else {
+					await loadAll();
+					currentDetailComputer = allComputers.find(c => c.id === (currentDetailComputer ? currentDetailComputer.id : -1)) || currentDetailComputer;
+					termPrint('t-ok', `${escHtml(ticket.software_needed)} installed successfully.`);
+					termPrint('t-ok', 'Verifying installation...');
+					termPrint('t-ok', 'Verification passed. Software is ready to use.');
+					renderIssueBanner(allTickets.find(t => t.id === currentDetailTicketId));
+					renderDetailActionBar(allTickets.find(t => t.id === currentDetailTicketId));
+				}
+				termPrint('', ''); return;
+			}
+
+			// Unknown command
+			termPrint('t-err', `'${escHtml(parts[0])}' is not recognized. Type <span class="t-info">help</span> for available commands.`);
+			termPrint('', '');
+		}
+
+		// ── Edit User ─────────────────────────────────────────────────────────
+		async function openEditUser(userId) {
+			const user = allUsers.find(u => u.id === userId);
+			if (!user) return;
+
+			document.getElementById('eu-id').value        = user.id;
+			document.getElementById('eu-username').value  = user.username;
+			document.getElementById('eu-full-name').value = user.full_name;
+			document.getElementById('eu-email').value     = user.email;
+			document.getElementById('eu-password').value  = '';
+			document.getElementById('eu-groups').value    = user.groups || '';
+			document.getElementById('eu-locked').value    = user.is_locked ? 'true' : 'false';
+
+			// Populate department dropdown
+			const deptSel = document.getElementById('eu-department');
+			const depts = await fetchJson('/api/departments');
+			const deptNames = depts.map(d => d.name);
+			// Include current dept even if not in the list (e.g. "New Hire")
+			if (!deptNames.includes(user.department)) deptNames.unshift(user.department);
+			deptSel.innerHTML = deptNames.map(n =>
+				`<option value="${escHtml(n)}" ${n === user.department ? 'selected' : ''}>${escHtml(n)}</option>`
+			).join('');
+
+			openModal('edit-user-modal');
+		}
+
+		async function submitEditUser() {
+			const id       = parseInt(document.getElementById('eu-id').value);
+			const payload  = {
+				full_name:  document.getElementById('eu-full-name').value.trim(),
+				department: document.getElementById('eu-department').value,
+				email:      document.getElementById('eu-email').value.trim(),
+				groups:     document.getElementById('eu-groups').value.trim(),
+				is_locked:  document.getElementById('eu-locked').value === 'true',
+			};
+			const pw = document.getElementById('eu-password').value.trim();
+			if (pw) payload.password = pw;
+
+			const res = await fetchJson(`/api/user/${id}`, {
+				method: 'PUT',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload),
+			});
+			if (res.error) { alert('Error: ' + res.error); return; }
+			closeModal('edit-user-modal');
+			await loadAll();
+		}
+
 		// ── Misc ──────────────────────────────────────────────────────────────
 		function exportUsers() {
 			window.location.href = '/api/export_users';
-		}
-
-		function escHtml(str) {
-			if (str == null) return '';
-			return String(str)
-				.replace(/&/g, '&amp;')
-				.replace(/</g, '&lt;')
-				.replace(/>/g, '&gt;')
-				.replace(/"/g, '&quot;');
 		}
 
 		window.addEventListener('load', loadAll);

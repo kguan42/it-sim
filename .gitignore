@@ -19,6 +19,7 @@ instance/
 
 # Generated files
 it_helpdesk_activity.csv
+.env
 
 # Empty placeholder folders
 it-sim/
