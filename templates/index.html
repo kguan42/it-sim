@@ -183,7 +183,7 @@
 			</div>
 			<table id="tickets-open-table">
 				<thead>
-					<tr><th>ID</th><th>Title</th><th>Category</th><th>Priority</th><th>Status</th><th>User</th><th>Assigned</th><th>SLA</th><th>Actions</th></tr>
+					<tr><th>ID</th><th>Title</th><th>Category</th><th>Priority</th><th>Status</th><th>User</th><th>Assigned</th><th>Due In</th><th>Actions</th></tr>
 				</thead>
 				<tbody></tbody>
 			</table>
@@ -873,8 +873,8 @@
 				['User Affected', ticket.user_affected],
 				['Assigned To',  ticket.assigned_to || '—'],
 				['Created',      fmtDate(ticket.created_at)],
-				['SLA Deadline', fmtDate(ticket.sla_deadline)],
-				['SLA Remaining', slaDisplay(ticket.sla_deadline, ticket.status)],
+				['Deadline', fmtDate(ticket.sla_deadline)],
+				['Due In', slaDisplay(ticket.sla_deadline, ticket.status)],
 			].map(([label, val]) => `
 				<div class="detail-item"><label>${label}</label><span>${val}</span></div>
 			`).join('');
