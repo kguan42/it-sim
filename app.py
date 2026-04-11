@@ -31,13 +31,15 @@ with app.app_context():
 
 
 def get_session_id():
-    """Return the visitor's session UUID, creating and seeding a new one if needed."""
+    """Return the visitor's session UUID, seeding the environment if it doesn't exist yet."""
     session.permanent = True
     if 'sid' not in session:
-        sid = str(uuid.uuid4())
-        session['sid'] = sid
+        session['sid'] = str(uuid.uuid4())
+    sid = session['sid']
+    # Seed if missing — handles new visitors and database wipes (e.g. Render redeploys)
+    if Department.query.filter_by(session_id=sid).count() == 0:
         seed_environment(sid)
-    return session['sid']
+    return sid
 
 
 # ── Routes ─────────────────────────────────────────────────────────────────────
