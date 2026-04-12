@@ -1,48 +1,83 @@
 # IT Help Desk Simulator
 
-A simple Python-based IT help desk simulator that generates support tickets, simulates Active Directory tasks, and logs activity.
+A browser-based IT help desk training tool built with Flask. Simulates a real ticketing environment: manage users, resolve incidents, and work through Active Directory tasks.
+
+**[Live Demo →](https://it-sim-1.onrender.com)**
+
+![IT Help Desk Simulator](etc/it-sim_screenshot.png)
+
+---
 
 ## Features
 
-- Generates random IT tickets for password resets, locked accounts, software installs, printer issues, VPN/connectivity and more.
-- Simulates Active Directory user state changes and group membership updates.
-- Tracks ticket assignments and resolution history.
-- Writes an activity log to `it_helpdesk_activity.csv`.
+### Ticket Management
+- Generate random support tickets across six categories: Password Reset, Account Lockout, New Hire Setup, Software Installation, Hardware Issue, and Network Issue
+- Priority levels (Critical / High / Medium / Low) with automatic due-in countdowns
+- Filter tickets by category, priority, and status
+- Add work notes to document resolution steps
 
-## Requirements
+### Simulated Active Directory
+- Five pre-seeded users across IT, HR, Finance, Marketing, and Sales departments
+- Account lockouts and password resets reflected in real time
+- New hire onboarding creates a live AD account with a generated username
+- Edit user details, department, groups, and account status
 
-- Python 3.8+
+### Computer Inventory
+- Workstations tied to users and departments
+- Hardware issues take machines offline; fix them to bring them back
+- Network issues assign APIPA addresses (169.254.x.x); renew the lease to restore connectivity
+- Software installation tracked per machine
 
-## Run
+### Remote Diagnostic Terminal
+Each ticket includes an interactive terminal with commands that mirror real IT tools:
 
-Install dependencies and start the Flask app:
+| Command | Description |
+|---|---|
+| `ping <hostname>` | Check host reachability |
+| `ipconfig` / `ipconfig /renew` | View or renew network config |
+| `Get-ADUser <username>` | Query Active Directory |
+| `net user <user> /active:yes` | Unlock an account |
+| `net user <user> <password>` | Reset a password |
+| `power-cycle <hostname>` | Bring an offline workstation back online |
+| `install <software>` | Deploy software to a workstation |
+| `list-software` | View installed software |
 
-```powershell
-python -m pip install -r requirements.txt
+### Per-User Sessions
+Every visitor gets a fully isolated environment via a session cookie. No login required. Your users, tickets, and computer states are private to you and persist across visits.
+
+---
+
+## Run Locally
+
+```bash
+git clone https://github.com/kguan42/it-sim.git
+cd it-sim
+python -m venv .venv
+.venv\Scripts\activate       # Windows
+# source .venv/bin/activate  # macOS / Linux
+pip install -r requirements.txt
 python app.py
 ```
 
-Then open `http://127.0.0.1:5000/` in your browser.
+Open `http://127.0.0.1:5000` in your browser.
 
+---
 
-## Files
+## Project Structure
 
-- `simulator.py` - main simulator script
-- `README.md` - usage instructions
-- `it_helpdesk_activity.csv` - generated activity log after running the simulator
- - `app.py` - Flask web application for browser-based simulation
- - `templates/index.html` - embedded web UI for the simulator
- - `requirements.txt` - Python packages required for the web app
+```
+it-sim/
+├── app.py              # Flask routes and session handling
+├── models.py           # SQLAlchemy models and business logic
+├── templates/
+│   └── index.html      # Single-page frontend
+├── requirements.txt
+├── Procfile            # Gunicorn start command for Render
+└── render.yaml         # Render deployment config
+```
 
-## Version
+---
 
-This version uses Flask with SQLite to simulate:
+## Author
 
-- Active Directory users, departments, and computer inventory with password management
-- Ticket queue with priority/SLA handling
-- Dynamic outcomes for category-based resolution
-- Password resets, account lockouts, and group membership changes
-- **Manual ticket completion**: For Password Reset (with password change prompt) and New Hire Setup tickets, users can manually perform actions like resetting passwords or creating new users.
-- **User export**: Download a CSV file containing all users and their passwords.
-
-
+**Kevin Guan**
